@@ -30,9 +30,9 @@ let readingInterval;      // interval to do readings (initialized at bottom)
 
 const https = require('https');
 // change the hostname, macAddress, and sessionKey to your own:
-let hostName = '';
-let macAddress = '';
-let sessionKey = '';
+let hostName = 'tigoe.io';
+let macAddress = 'A8:61:0A:B3:2A:DD';
+let sessionKey = '06A4DA6E-4587-4030-B257-17D1E7B6EA2D';
 
 /*
 	the callback function to be run when the server response comes in.
