@@ -37,6 +37,7 @@ function checkSensors() {
   function getKnob(error, reading) {
     if (error) throw error;
     device.potentiometer = reading.value;
+    /////
   }
 
   // make sure there are two ADC channels open to read,
