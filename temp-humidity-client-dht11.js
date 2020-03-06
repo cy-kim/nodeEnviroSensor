@@ -32,8 +32,8 @@ let readingInterval;      // interval to do readings (initialized at bottom)
 const https = require('https');
 // change the hostname, macAddress, and sessionKey to your own:
 let hostName = 'tigoe.io';
-let macAddress = 'A8:61:0A:B3:2A:DD';
-let sessionKey = '06A4DA6E-4587-4030-B257-17D1E7B6EA2D';
+let macAddress = 'b8:27:eb:72:ac:22';
+let sessionKey = 'd03a3856-c1ec-4147-9056-1178a19458c0';
 
 var opts = {
    width: 128,     // screen width and height
@@ -81,7 +81,7 @@ function getReadings() {
       console.log(device);
       sendToServer(JSON.stringify(device));
       // stop reading:
-      clearInterval(readingInterval);
+      //clearInterval(readingInterval); //stops the interval
    }
 }
 
@@ -129,10 +129,15 @@ function showTime() {
    oled.writeString(font, 2, 'temp:' + "\n"+ tempVar + 'humidity:' + humidVar, 1, true); //has to be string
 }
 
+function runBoth(){
+  showTime();
+  getReadings();
+}
 //showTime();
 // // update once per second:
-setInterval(showTime, 1000);
+setInterval(runBoth, 5000);
 
 // set an interval to keep running. The callback function (getReadings)
 // will clear the interval when it gets good readings:
-readingInterval = setInterval(getReadings, 1000);
+//readingInterval = setInterval(getReadings, 1000);
+
