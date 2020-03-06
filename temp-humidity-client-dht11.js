@@ -21,16 +21,12 @@
   by Tom Igoe
 */
 var sensor = require("node-dht-sensor");
+const i2c = require('i2c-bus');
+const i2cBus = i2c.openSync(1);
+const screen = require('oled-i2c-bus');
+const font = require('oled-font-5x7');
 
-
-const mcpadc = require('mcp-spi-adc');  // include the MCP SPI library
-const sampleRate = { speedHz: 20000 };  // ADC sample rate
-
-let tempSensorVal = 0;
-let humiditySensorVal = 0;
 let device = {};          // object for device characteristics
-let supplyVoltage = 3.3;  // analog reference voltage
-let resolution = 1.0;     // A-to-D resolution
 let readingInterval;      // interval to do readings (initialized at bottom)
 
 const https = require('https');
@@ -39,17 +35,19 @@ let hostName = 'tigoe.io';
 let macAddress = 'A8:61:0A:B3:2A:DD';
 let sessionKey = '06A4DA6E-4587-4030-B257-17D1E7B6EA2D';
 
-function readDHTSensor (){
-  sensor.read(11, 4, function(err, temperature, humidity) {
-    if (!err) {
-      let tempSensorVal = ${temperature};
-      let humiditySensorVal = ${humidity};
-      console.log(`temp: ${temperature}°C, humidity: ${humidity}%`);
-    }
-  });
-}
+var opts = {
+   width: 128,     // screen width and height
+   height: 64,
+   address: 0x3C  // I2C address:check your particular model
+};
 
-setInterval(readDHTSensor,1000);
+// make an instance of the OLED library
+var oled = new screen(i2cBus, opts);
+
+
+
+
+//setInterval(readDHTSensor,1000);
 /*
 	the callback function to be run when the server response comes in.
 	this callback assumes a chunked response, with several 'data'
@@ -65,13 +63,20 @@ function getServerResponse(response) {
 // open two ADC channels:
 
 
-// get sensor readings into the object called device:
+//get sensor readings into the object called device:
 function getReadings() {
+
+
+
    // get readings:
-   tempSensor.read(getTemperature);
-   humiditySensor.read(getHumidity);
+  sensor.read(11, 4, function(err, temperature, humidity) {
+    device.tempSensorVal = Number(temperature);
+    device.humiditySensorVal = Number(humidity);
+    //console.log(device.tempSensorVal);
+    //console.log(`temp: ${temperature}°C, humidity: ${humidity}%`);
+  });
    // if they're both numbers:
-   if (!isNaN(device.temperature) && !isNaN(device.humidity)) {
+  if (!isNaN(device.tempSensorVal) && !isNaN(device.humiditySensorVal)) {
       // print them and send to server:
       console.log(device);
       sendToServer(JSON.stringify(device));
@@ -111,6 +116,22 @@ function sendToServer(dataToSend) {
    request.end();			            // end it
 
 }
+
+function showTime() {
+   // clear the screen:
+   let tempVar = String(device.tempSensorVal); 
+   let humidVar = String(device.humiditySensorVal);
+   oled.clearDisplay();
+   // set cursor to x = 0 y = 0:
+   oled.setCursor(0, 0);
+   // make a string of th time:
+   
+   oled.writeString(font, 2, 'temp:' + "\n"+ tempVar + 'humidity:' + humidVar, 1, true); //has to be string
+}
+
+//showTime();
+// // update once per second:
+setInterval(showTime, 1000);
 
 // set an interval to keep running. The callback function (getReadings)
 // will clear the interval when it gets good readings:
