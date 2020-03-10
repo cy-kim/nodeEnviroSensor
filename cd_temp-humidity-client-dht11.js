@@ -1,5 +1,11 @@
 //modified from Tom Igoe's adc-mcp-3xxx code:
 //https://github.com/tigoe/NodeSensorExamples/blob/master/adc-mcp-3xxx/temp-humidity-client.js
+//Provide feedback on the device’s current operational status as well, specifically: 
+
+//Is it connected to a network
+//Has it made contact with the remote server in the last hour
+//Also include controls that allow a user to browse the current properties of the device locally, 
+//including all sensor readings, network SSID, IP address, and connection status.
 
 
 //initialzing and setting up sensor
